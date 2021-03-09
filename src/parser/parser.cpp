@@ -28,14 +28,14 @@ Token Parser::expect(TokenType expected_type) {
 
 
 //file -> newlines_0 statement_list newlines_0
-PARSER_FUNC(file, void) {
+PARSER_FUNC(file, AST::ptr_list<AST::Statement>) {
     parse_newlines_0();
     parse_statement_list();
     parse_newlines_0();
 }
 //statement_list -> statement
 //statement_list -> statement newlines_1 statement_list
-PARSER_FUNC(statement_list, void) {
+PARSER_FUNC(statement_list, AST::ptr_list<AST::Statement>) {
     parse_statement();
     Token t = lexer.peek();
     if(t.token_type == TokenType::NEWLINE) {
@@ -46,7 +46,7 @@ PARSER_FUNC(statement_list, void) {
 //statement -> directive
 //statement -> labeled_statement
 //statement -> instruction
-PARSER_FUNC(statement, void) {
+PARSER_FUNC(statement, std::unique_ptr<AST::Statement>) {
     Token t1 = lexer.getToken();
     Token t2 = lexer.peek();
     lexer.ungetToken(t1);
@@ -75,20 +75,20 @@ PARSER_FUNC(statement, void) {
     }
 }
 //directive -> DOT ID atom_list
-PARSER_FUNC(directive, void) {
+PARSER_FUNC(directive, std::unique_ptr<AST::Instruction>) {
     expect(TokenType::DOT);
     expect(TokenType::ID);
     parse_atom_list();
 }
 //labeled_statement -> label_list newlines_0 statement
-PARSER_FUNC(labeled_statement, void) {
+PARSER_FUNC(labeled_statement, std::unique_ptr<AST::Statement>) {
     parse_label_list();
     parse_newlines_0();
     parse_statement();
 }
 //label_list -> label
 //label_list -> label newlines_0 label_list
-PARSER_FUNC(label_list, void) {
+PARSER_FUNC(label_list, void, AST::ptr_list<AST::Label>& labels) {
     parse_label();
     parse_newlines_0();
 
@@ -101,16 +101,16 @@ PARSER_FUNC(label_list, void) {
     }
 }
 //label -> ID COLON
-PARSER_FUNC(label, void) {
+PARSER_FUNC(label, std::unique_ptr<AST::Label>) {
     expect(TokenType::ID);
     expect(TokenType::COLON);
 }
 //instruction -> atom_list
-PARSER_FUNC(instruction, void) {
+PARSER_FUNC(instruction, std::unique_ptr<AST::Instruction>) {
     parse_atom_list();
 }
 //atom -> ID | number
-PARSER_FUNC(atom, void) {
+PARSER_FUNC(atom, std::unique_ptr<AST::Atom>) {
     Token t = lexer.peek();
     if(t.token_type == TokenType::ID) {
         expect(TokenType::ID);
@@ -121,7 +121,7 @@ PARSER_FUNC(atom, void) {
 }
 //atom_list -> atom
 //atom_list -> atom atom_list
-PARSER_FUNC(atom_list, void) {
+PARSER_FUNC(atom_list, void, AST::ptr_list<AST::Atom>& atoms) {
     Token t = lexer.peek();
     if(t.token_type == TokenType::ID ||
        t.token_type == TokenType::NUM ||
@@ -138,7 +138,7 @@ PARSER_FUNC(atom_list, void) {
     }
 }
 //number -> NUM | HEXNUM | BINNUM
-PARSER_FUNC(number, void) {
+PARSER_FUNC(number, void, std::unique_ptr<AST::Atom>) {
     Token t = lexer.peek();
     if(t.token_type == TokenType::NUM) {
         expect(TokenType::NUM);

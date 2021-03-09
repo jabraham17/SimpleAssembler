@@ -5,15 +5,16 @@
 #ifndef __SIMPLEASSEMBLER_PARSER_H__
 #define __SIMPLEASSEMBLER_PARSER_H__
 
+#include "AST.h"
 #include "lexer.h"
+#include <cstdint>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
 #include <ostream>
 #include <sstream>
-#include <cstdint>
-#include <vector>
 #include <string>
+#include <vector>
 
 
 class SyntaxError : public std::exception {
@@ -60,17 +61,17 @@ private:
 
 
 #define PARSER_RULES(F)        \
-    F(file, void)              \
-    F(statement_list, void)    \
-    F(statement, void)         \
-    F(directive, void)         \
-    F(labeled_statement, void) \
-    F(label_list, void)        \
-    F(label, void)             \
-    F(instruction, void)       \
-    F(atom, void)    \
-    F(atom_list, void)    \
-    F(number, void)            \
+    F(file, AST::ptr_list<AST::Statement>)              \
+    F(statement_list, AST::ptr_list<AST::Statement>)    \
+    F(statement, std::unique_ptr<AST::Statement>)         \
+    F(directive, std::unique_ptr<AST::Instruction>)         \
+    F(labeled_statement, std::unique_ptr<AST::Statement>) \
+    F(label_list, void, AST::ptr_list<AST::Label>&)        \
+    F(label, std::unique_ptr<AST::Label>)             \
+    F(instruction, std::unique_ptr<AST::Instruction>)       \
+    F(atom, std::unique_ptr<AST::Atom>)         \
+    F(atom_list, void, AST::ptr_list<AST::Atom>&)         \
+    F(number, std::unique_ptr<AST::Atom>)            \
     F(newlines_0, void)        \
     F(newlines_1, void)
 

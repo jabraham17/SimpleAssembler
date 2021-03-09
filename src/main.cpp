@@ -2,6 +2,7 @@
 #include "instruction-definition/Register.h"
 #include "parser/lexer.h"
 #include "parser/parser.h"
+#include "parser/AST.h"
 #include <iostream>
 #include <fstream>
 
