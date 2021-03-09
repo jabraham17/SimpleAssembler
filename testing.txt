@@ -1,0 +1,24 @@
+
+//comment
+
+//16 bit based
+//one word is 16 bits
+//one byte is 8 bits
+
+//these are equivalent
+.word 56
+.word 0x38
+.word 0b111000
+
+//can also specify just a byte
+.byte 37
+
+//we can make labels as
+label:
+
+// provide two files to lexer, one of registers and one of instructions. use this to inform parsing
+// anything not an instruction or register is assumed to be a label
+
+
+//opcodes are 2 bytes, followed by 4 more bytes for operands
+//each instruction is therefore 6 bytes, always

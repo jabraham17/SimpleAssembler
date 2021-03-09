@@ -1,0 +1,15 @@
+//top level comment
+
+.word 5 5 5
+.byte 4
+.steve
+
+label:
+
+add 5 6
+sub 7 0
+91 71 o3
+
+label: label:
+label:
+isnt
