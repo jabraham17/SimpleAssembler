@@ -82,13 +82,23 @@ PARSER_FUNC(directive, void) {
 }
 //labeled_statement -> label_list newlines_0 statement
 PARSER_FUNC(labeled_statement, void) {
-    parse_label();
+    parse_label_list();
     parse_newlines_0();
     parse_statement();
 }
 //label_list -> label
 //label_list -> label newlines_0 label_list
 PARSER_FUNC(label_list, void) {
+    parse_label();
+    parse_newlines_0();
+
+    Token t1 = lexer.getToken();
+    Token t2 = lexer.peek();
+    lexer.ungetToken(t1);
+    //if we have more labels, keep going
+    if(t2.token_type == TokenType::COLON) {
+        parse_label_list();
+    }
 }
 //label -> ID COLON
 PARSER_FUNC(label, void) {
